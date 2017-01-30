@@ -48,9 +48,9 @@ class Main {
 	}
 	
 	@RequestMapping("/logout")
-	String showLogOut(Model model) {
+	String showLogOut(Model model, HttpSession session) {
+		session.removeAttribute("user");
 		model.addAttribute("shop", shop);
-		// ...
 		return "logout";
 	}
 	
