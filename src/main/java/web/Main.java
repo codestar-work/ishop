@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @SpringBootApplication
-class Main {
+public class Main {
 	String database = "jdbc:mysql://icode.run/ishop" + 
 						"?user=ishop&password=iShop2017";
 	String shop = "iCoffee";
