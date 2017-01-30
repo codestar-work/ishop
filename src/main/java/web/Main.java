@@ -60,7 +60,12 @@ class Main {
 			ResultSet r = p.executeQuery();
 			if (r.next()) {
 				passed = true;
-				session.setAttribute("user", r.getString("name"));
+				Member m = new Member();
+				m.name = r.getString("name");
+				m.fullName = r.getString("full_name");
+				m.email = r.getString("email");
+				m.code  = r.getLong("code");
+				session.setAttribute("member", m);
 			}
 			r.close();
 			p.close();
@@ -76,10 +81,11 @@ class Main {
 	
 	@RequestMapping("/settings")
 	String showSettings(Model model, HttpSession session) {
-		Object user = session.getAttribute("user");
-		if (user == null) {
+		Object member = session.getAttribute("member");
+		if (member == null) {
 			return "redirect:/login";
 		} else {
+			model.addAttribute("member", member);
 			model.addAttribute("shop", shop);
 			return "settings";
 		}
@@ -87,7 +93,7 @@ class Main {
 	
 	@RequestMapping("/logout")
 	String showLogOut(Model model, HttpSession session) {
-		session.removeAttribute("user");
+		session.removeAttribute("member");
 		model.addAttribute("shop", shop);
 		return "logout";
 	}
