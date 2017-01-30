@@ -9,26 +9,30 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @SpringBootApplication
 class Main {
+	String shop = "iStud";
 	
 	@RequestMapping("/")
 	String showHome(Model model) {
-		model.addAttribute("shop", "iStud");
+		model.addAttribute("shop", shop);
 		return "index";
 	}
 	
 	@RequestMapping("/login")
-	String showLogIn() {
+	String showLogIn(Model model) {
+		model.addAttribute("shop", shop);
 		return "login";
 	}
 	
 	@RequestMapping("/settings")
-	String showSettings() {
+	String showSettings(Model model) {
+		model.addAttribute("shop", shop);
 		// ...
 		return "settings";
 	}
 	
 	@RequestMapping("/logout")
-	String showLogOut() {
+	String showLogOut(Model model) {
+		model.addAttribute("shop", shop);
 		// ...
 		return "logout";
 	}
