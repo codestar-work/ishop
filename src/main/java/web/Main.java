@@ -1,5 +1,6 @@
 package web;
-
+import java.sql.*;
+import java.util.*;
 import javax.servlet.http.*;
 import org.springframework.ui.*;
 import org.springframework.boot.*;
@@ -10,10 +11,24 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @SpringBootApplication
 class Main {
-	String shop = "iStud";
+	String shop = "iCoffee";
 	
 	@RequestMapping("/")
 	String showHome(Model model) {
+		LinkedList list = new LinkedList();
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection c = DriverManager.getConnection(
+				"jdbc:mysql://icode.run/ishop",
+				"ishop", "iShop2017");
+			Statement s = c.createStatement();
+			ResultSet r = s.executeQuery("select * from product");
+			while (r.next()) {
+				String name = r.getString("name");
+				list.add(name);
+			}
+		} catch (Exception e) { }
+		model.addAttribute("product", list);
 		model.addAttribute("shop", shop);
 		return "index";
 	}
