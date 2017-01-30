@@ -59,9 +59,8 @@ class Main {
 		return "Server is OK";
 	}
 	
-	
 	public static void main(String [] args) {
 		SpringApplication.run(Main.class, args);
-	}	
+	}
 	
 }
