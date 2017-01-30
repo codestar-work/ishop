@@ -17,10 +17,21 @@ class Main {
 		return "index";
 	}
 	
-	@RequestMapping("/login")
+	@RequestMapping(value="/login")
 	String showLogIn(Model model) {
 		model.addAttribute("shop", shop);
 		return "login";
+	}
+	
+	@RequestMapping(value="/login", method=RequestMethod.POST)
+	String checkLogin(String username, String password,
+			Model model) {
+		if (username.equals("owner") && 
+			password.equals("owner2017")) {
+			return "redirect:/settings";
+		} else {
+			return "redirect:/login?message=Incorrect Password";
+		}
 	}
 	
 	@RequestMapping("/settings")
