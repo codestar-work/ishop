@@ -1,5 +1,6 @@
 package web;
 
+import javax.servlet.http.*;
 import org.springframework.ui.*;
 import org.springframework.boot.*;
 import org.springframework.stereotype.*;
@@ -25,9 +26,10 @@ class Main {
 	
 	@RequestMapping(value="/login", method=RequestMethod.POST)
 	String checkLogin(String username, String password,
-			Model model) {
+			Model model, HttpSession session) {
 		if (username.equals("owner") && 
 			password.equals("owner2017")) {
+			session.setAttribute("user", "owner");
 			return "redirect:/settings";
 		} else {
 			return "redirect:/login?message=Incorrect Password";
@@ -35,10 +37,14 @@ class Main {
 	}
 	
 	@RequestMapping("/settings")
-	String showSettings(Model model) {
-		model.addAttribute("shop", shop);
-		// ...
-		return "settings";
+	String showSettings(Model model, HttpSession session) {
+		Object user = session.getAttribute("user");
+		if (user == null) {
+			return "redirect:/login";
+		} else {
+			model.addAttribute("shop", shop);
+			return "settings";
+		}
 	}
 	
 	@RequestMapping("/logout")
