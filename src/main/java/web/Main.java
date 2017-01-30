@@ -16,6 +16,23 @@ class Main {
 		return "index";
 	}
 	
+	@RequestMapping("/login")
+	String showLogIn() {
+		return "login";
+	}
+	
+	@RequestMapping("/settings")
+	String showSettings() {
+		// ...
+		return "settings";
+	}
+	
+	@RequestMapping("/logout")
+	String showLogOut() {
+		// ...
+		return "logout";
+	}
+	
 	@RequestMapping("/status") @ResponseBody
 	String status() {
 		return "Server is OK";
