@@ -45,9 +45,6 @@ insert into category(name) values('Cookie');
 insert into category(name) values('Cake');
 
 insert into product(name, price, category)
-values('Latte', 80, 1);
-
-insert into product(name, price, category)
 select 'Latte', 80, code
 from category where name = 'Coffee';
 
