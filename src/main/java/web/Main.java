@@ -11,22 +11,30 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @SpringBootApplication
 class Main {
+	String database = "jdbc:mysql://icode.run/ishop" + 
+						"?user=ishop&password=iShop2017";
 	String shop = "iCoffee";
+	
+	Main() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (Exception e) { }
+	}
 	
 	@RequestMapping("/")
 	String showHome(Model model) {
 		LinkedList list = new LinkedList();
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			Connection c = DriverManager.getConnection(
-				"jdbc:mysql://icode.run/ishop",
-				"ishop", "iShop2017");
+			Connection c = DriverManager.getConnection(database);
 			Statement s = c.createStatement();
 			ResultSet r = s.executeQuery("select * from product");
 			while (r.next()) {
 				String name = r.getString("name");
 				list.add(name);
 			}
+			r.close();
+			s.close();
+			c.close();
 		} catch (Exception e) { }
 		model.addAttribute("product", list);
 		model.addAttribute("shop", shop);
@@ -42,12 +50,27 @@ class Main {
 	@RequestMapping(value="/login", method=RequestMethod.POST)
 	String checkLogin(String username, String password,
 			Model model, HttpSession session) {
-		if (username.equals("owner") && 
-			password.equals("owner2017")) {
-			session.setAttribute("user", "owner");
+		boolean passed = false;
+		try {
+			Connection c = DriverManager.getConnection(database);
+			PreparedStatement p = c.prepareStatement(
+			"select * from member where name=? and password=sha2(?, 512)");
+			p.setString(1, username);
+			p.setString(2, password);
+			ResultSet r = p.executeQuery();
+			if (r.next()) {
+				passed = true;
+				session.setAttribute("user", r.getString("name"));
+			}
+			r.close();
+			p.close();
+			c.close();
+			
+		} catch (Exception e) { }
+		if (passed) {
 			return "redirect:/settings";
 		} else {
-			return "redirect:/login?message=Incorrect Password";
+			return "redirect:/login?message=Incorrect Password";			
 		}
 	}
 	
