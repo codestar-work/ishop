@@ -1,10 +1,12 @@
 package web;
+import java.io.*;
 import java.sql.*;
 import java.util.*;
 import javax.servlet.http.*;
 import org.springframework.ui.*;
 import org.springframework.boot.*;
 import org.springframework.stereotype.*;
+import org.springframework.web.multipart.*;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @SpringBootApplication
 public class Main {
 	String database = "jdbc:mysql://icode.run/ishop" + 
-						"?user=ishop&password=iShop2017";
+						"?user=ishop&password=iShop2017" +
+						"&characterEncoding=UTF-8";
 	String shop = "";
 	
 	Main() {
@@ -178,7 +181,8 @@ public class Main {
 	
 	@RequestMapping(value="/edit", method=RequestMethod.POST)
 	String updateProduct(HttpSession session, Model model,
-			long code, String name, String detail, double price) {
+			long code, String name, String detail, double price,
+			MultipartFile photo) {
 		Member member = (Member)session.getAttribute("member");
 		if (member == null) {
 			return "redirect:/login";
@@ -201,6 +205,19 @@ public class Main {
 					p.execute();
 				}
 			} catch (Exception e) { }
+			
+			if (photo != null) {
+				try {
+					byte [ ] data = photo.getBytes();
+					FileOutputStream fos = new FileOutputStream(
+					"./src/main/resources/public/product-" + code + ".jpg");
+					for (int i = 0; i < data.length; i++) {
+						fos.write(data[i]);
+					}
+					fos.close();
+				} catch (Exception e) { }
+			}
+			
 			return "edit";
 		}
 	}
