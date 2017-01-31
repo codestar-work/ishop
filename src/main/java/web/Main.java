@@ -70,7 +70,6 @@ public class Main {
 			r.close();
 			p.close();
 			c.close();
-			
 		} catch (Exception e) { }
 		if (passed) {
 			return "redirect:/settings";
@@ -85,8 +84,18 @@ public class Main {
 		if (member == null) {
 			return "redirect:/login";
 		} else {
-			model.addAttribute("member", member);
-			model.addAttribute("shop", shop);
+			try (Connection c = DriverManager.getConnection(database)) {
+			try (Statement  s = c.createStatement()) {
+			try (ResultSet  r = s.executeQuery("select * from shop")) {
+				if (r.next()) {
+					model.addAttribute("member", member);
+					model.addAttribute("shop",   r.getString("name"));
+					model.addAttribute("phone",  r.getString("phone"));
+				}
+			}	
+			}
+			} catch (Exception e) { }
+			
 			return "settings";
 		}
 	}
