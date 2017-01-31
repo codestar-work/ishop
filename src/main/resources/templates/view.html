@@ -2,11 +2,10 @@
 
 <div class='container'>
 	
-	<#list product as p>
-	<a href="/view/${p.name}"> ${p.name} </a><br>
-	</#list>
+	<h3>${product.name}</h3>
+	<p>${product.detail}</p>
 	
+	<img src="/${product.photo}">
 </div>
-
 
 <#include "footer.html">

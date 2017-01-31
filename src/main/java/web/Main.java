@@ -253,6 +253,29 @@ public class Main {
 		return "result";
 	}
 	
+	@RequestMapping("/view/{name}")
+	String viewProduct(@PathVariable String name, Model model) {
+		Product t = new Product();
+		String sql = "select * from product where name=?";
+		try (Connection c = DriverManager.getConnection(database)) {
+			try (PreparedStatement p = c.prepareStatement(sql)) {
+				p.setString(1, name);
+				try (ResultSet r = p.executeQuery()) {
+					if (r.next()) {
+						t.code = r.getLong("code");
+						t.name = r.getString("name");
+						t.detail = r.getString("detail");
+						t.photo = r.getString("photo");
+						t.price = r.getDouble("price");
+					}
+				}
+			}
+		} catch (Exception e) { }
+		model.addAttribute("shop", shop);
+		model.addAttribute("product", t);
+		return "view";
+	}
+	
 	@RequestMapping("/status") @ResponseBody
 	String status() {
 		return "Server is OK";
