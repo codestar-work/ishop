@@ -233,8 +233,8 @@ public class Main {
 						"name like ? or detail like ?";
 		try (Connection c = DriverManager.getConnection(database)) {
 			try (PreparedStatement p = c.prepareStatement(sql)) {
-				p.setString(1, "%" + "query" + "%");
-				p.setString(2, "%" + "query" + "%");
+				p.setString(1, "%" + query + "%");
+				p.setString(2, "%" + query + "%");
 				try (ResultSet r = p.executeQuery()) {
 					while (r.next()) {
 						Product t = new Product();
@@ -248,7 +248,7 @@ public class Main {
 				}
 			}
 		} catch (Exception e) { }
-		
+		model.addAttribute("shop", shop);
 		model.addAttribute("product", list);
 		return "result";
 	}
