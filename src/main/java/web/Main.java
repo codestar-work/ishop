@@ -91,20 +91,32 @@ public class Main {
 	String showSettings(Model model, HttpSession session,
 			String shop, String phone) {
 		Object member = session.getAttribute("member");
+		LinkedList<Product> list = new LinkedList<>();
 		if (member == null) {
 			return "redirect:/login";
 		} else {
 			try (Connection c = DriverManager.getConnection(database)) {
-			try (Statement  s = c.createStatement()) {
-			try (ResultSet  r = s.executeQuery("select * from shop")) {
-				if (r.next()) {
-					model.addAttribute("member", member);
-					this.shop = r.getString("name");
-					model.addAttribute("shop",   r.getString("name"));
-					model.addAttribute("phone",  r.getString("phone"));
+				try (Statement  s = c.createStatement()) {
+					try (ResultSet  r = s.executeQuery("select * from shop")) {
+						if (r.next()) {
+							model.addAttribute("member", member);
+							this.shop = r.getString("name");
+							model.addAttribute("shop",   r.getString("name"));
+							model.addAttribute("phone",  r.getString("phone"));
+						}
+					}
+					try (ResultSet r = s.executeQuery("select * from product")){
+						while (r.next()) {
+							Product p = new Product();
+							p.code   = r.getLong("code");
+							p.name   = r.getString("name");
+							p.detail = r.getString("detail");
+							p.photo  = r.getString("photo");
+							p.price  = r.getDouble("price");
+							list.add(p);
+						}
+					}
 				}
-			}	
-			}
 			} catch (Exception e) { }
 			
 			if (shop != null || phone != null) {
@@ -120,6 +132,7 @@ public class Main {
 				} catch (Exception e) { }
 				return "redirect:/settings";
 			}
+			model.addAttribute("product", list);
 			return "settings";
 		}
 	}
