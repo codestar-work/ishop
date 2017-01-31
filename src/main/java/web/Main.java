@@ -147,6 +147,19 @@ public class Main {
 		return "logout";
 	}
 	
+	@RequestMapping("/add")
+	String showAddProduct(HttpSession session, Model model) {
+		Member member = (Member)session.getAttribute("member");
+		if (member == null) {
+			return "redirect:/login";
+		} else {
+			Product t = new Product();
+			model.addAttribute("product", t);
+			model.addAttribute("shop", shop);
+			return "edit";
+		}
+	}
+	
 	@RequestMapping("/edit")
 	String showEditProduct(long code, Model m, HttpSession session) {
 		Member member = (Member)session.getAttribute("member");
@@ -179,7 +192,7 @@ public class Main {
 		}
 	}
 	
-	@RequestMapping(value="/edit", method=RequestMethod.POST)
+	@RequestMapping(value={"/edit","/add"}, method=RequestMethod.POST)
 	String updateProduct(HttpSession session, Model model,
 			long code, String name, String detail, double price,
 			MultipartFile photo) {
@@ -208,19 +221,32 @@ public class Main {
 			
 			model.addAttribute("product", t);
 			model.addAttribute("shop", shop);
-			
-			String sql = "update product set name=?,detail=?,price=?,photo=? " +
-						"where code=?";
-			try (Connection c = DriverManager.getConnection(database)) {
-				try (PreparedStatement p = c.prepareStatement(sql)) {
-					p.setString(1, name);
-					p.setString(2, detail);
-					p.setDouble(3, price);
-					p.setString(4, file);
-					p.setLong(5, code);
-					p.execute();
-				}
-			} catch (Exception e) { }
+			if (code == 0) {
+				String sql = "insert into product(name,detail,price,photo) " +
+							"values(?,?,?,?)";
+				try (Connection c = DriverManager.getConnection(database)) {
+					try (PreparedStatement p = c.prepareStatement(sql)) {
+						p.setString(1, name);
+						p.setString(2, detail);
+						p.setDouble(3, price);
+						p.setString(4, file);
+						p.execute();
+					}
+				} catch (Exception e) { }
+			} else {
+				String sql = "update product set name=?,detail=?,price=?,photo=? " +
+							"where code=?";
+				try (Connection c = DriverManager.getConnection(database)) {
+					try (PreparedStatement p = c.prepareStatement(sql)) {
+						p.setString(1, name);
+						p.setString(2, detail);
+						p.setDouble(3, price);
+						p.setString(4, file);
+						p.setLong(5, code);
+						p.execute();
+					}
+				} catch (Exception e) { }
+			}
 			
 			return "edit";
 		}
