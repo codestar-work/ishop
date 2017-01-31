@@ -145,27 +145,32 @@ public class Main {
 	}
 	
 	@RequestMapping("/edit")
-	String showEditProduct(long code, Model m) {
-		Product t = new Product();
-		String sql = "select * from product where code = ?";
-		try (Connection c = DriverManager.getConnection(database)) {
-			try (PreparedStatement p = c.prepareStatement(sql)) {
-				p.setLong(1, code);
-				try (ResultSet r = p.executeQuery()) {
-					if (r.next()) {
-						t.code   = r.getLong("code");
-						t.name   = r.getString("name");
-						t.detail = r.getString("detail");
-						t.photo  = r.getString("photo");
-						t.price  = r.getDouble("price");
+	String showEditProduct(long code, Model m, HttpSession session) {
+		Member member = (Member)session.getAttribute("member");
+		if (member == null) {
+			return "redirect:/login";
+		} else {
+			Product t = new Product();
+			String sql = "select * from product where code = ?";
+			try (Connection c = DriverManager.getConnection(database)) {
+				try (PreparedStatement p = c.prepareStatement(sql)) {
+					p.setLong(1, code);
+					try (ResultSet r = p.executeQuery()) {
+						if (r.next()) {
+							t.code   = r.getLong("code");
+							t.name   = r.getString("name");
+							t.detail = r.getString("detail");
+							t.photo  = r.getString("photo");
+							t.price  = r.getDouble("price");
+						}
 					}
 				}
-			}
-		} catch (Exception e) { }
-		
-		m.addAttribute("shop", shop);
-		m.addAttribute("product", t);
-		return "edit";
+			} catch (Exception e) { }
+
+			m.addAttribute("shop", shop);
+			m.addAttribute("product", t);
+			return "edit";
+		}
 	}
 	
 	@RequestMapping("/status") @ResponseBody
