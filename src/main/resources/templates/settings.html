@@ -16,7 +16,7 @@
 
 <div class="container">
 	<#list product as p >
-		${p.name}<br>
+		<a href="/edit?code=${p.code}"> ${p.name} </a><br>
 	</#list>
 </div>
 
