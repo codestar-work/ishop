@@ -226,6 +226,33 @@ public class Main {
 		}
 	}
 	
+	@RequestMapping("/result")
+	String showSearchResult(String query, Model model) {
+		LinkedList<Product> list = new LinkedList<>();
+		String sql = "select * from product where " +
+						"name like ? or detail like ?";
+		try (Connection c = DriverManager.getConnection(database)) {
+			try (PreparedStatement p = c.prepareStatement(sql)) {
+				p.setString(1, "%" + "query" + "%");
+				p.setString(2, "%" + "query" + "%");
+				try (ResultSet r = p.executeQuery()) {
+					while (r.next()) {
+						Product t = new Product();
+						t.code = r.getLong("code");
+						t.name = r.getString("name");
+						t.detail = r.getString("detail");
+						t.price = r.getDouble("price");
+						t.photo = r.getString("photo");
+						list.add(t);
+					}
+				}
+			}
+		} catch (Exception e) { }
+		
+		model.addAttribute("product", list);
+		return "result";
+	}
+	
 	@RequestMapping("/status") @ResponseBody
 	String status() {
 		return "Server is OK";
