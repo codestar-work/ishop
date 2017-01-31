@@ -34,7 +34,7 @@ create table product (
 
 -- Test Data
 insert into shop(name,phone)
-values('iCoffee', '022142000');
+values('iCoffee', '02214200');
 
 insert into member(name, password, full_name, email)
 values('markz', sha2('mark123', 512),

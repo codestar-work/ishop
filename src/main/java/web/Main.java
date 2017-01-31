@@ -79,7 +79,8 @@ public class Main {
 	}
 	
 	@RequestMapping("/settings")
-	String showSettings(Model model, HttpSession session) {
+	String showSettings(Model model, HttpSession session,
+			String shop, String phone) {
 		Object member = session.getAttribute("member");
 		if (member == null) {
 			return "redirect:/login";
@@ -96,6 +97,18 @@ public class Main {
 			}
 			} catch (Exception e) { }
 			
+			if (shop != null || phone != null) {
+				model.addAttribute("shop", shop);
+				model.addAttribute("phone", phone);
+				String sql = "update shop set shop = ?, phone = ?";
+				try (Connection c = DriverManager.getConnection(database)) {
+				try (PreparedStatement  p = c.prepareStatement(sql)) {
+					p.setString(1, shop);
+					p.setString(2, phone);
+					p.execute();
+				}
+				} catch (Exception e) { }
+			}
 			return "settings";
 		}
 	}
