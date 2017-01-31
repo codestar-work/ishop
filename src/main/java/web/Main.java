@@ -192,31 +192,35 @@ public class Main {
 			t.name   = name;
 			t.detail = detail;
 			t.price  = price;
-			model.addAttribute("product", t);
-			model.addAttribute("shop", shop);
-			String sql = "update product set name=?,detail=?,price=? " +
-						"where code=?";
-			try (Connection c = DriverManager.getConnection(database)) {
-				try (PreparedStatement p = c.prepareStatement(sql)) {
-					p.setString(1, name);
-					p.setString(2, detail);
-					p.setDouble(3, price);
-					p.setLong(4, code);
-					p.execute();
-				}
-			} catch (Exception e) { }
-			
+			String file = UUID.randomUUID().toString() + ".jpg";
 			if (photo != null) {
+				t.photo = file;
 				try {
 					byte [ ] data = photo.getBytes();
 					FileOutputStream fos = new FileOutputStream(
-					"./src/main/resources/public/product-" + code + ".jpg");
+					"./src/main/resources/public/" + file);
 					for (int i = 0; i < data.length; i++) {
 						fos.write(data[i]);
 					}
 					fos.close();
 				} catch (Exception e) { }
 			}
+			
+			model.addAttribute("product", t);
+			model.addAttribute("shop", shop);
+			
+			String sql = "update product set name=?,detail=?,price=?,photo=? " +
+						"where code=?";
+			try (Connection c = DriverManager.getConnection(database)) {
+				try (PreparedStatement p = c.prepareStatement(sql)) {
+					p.setString(1, name);
+					p.setString(2, detail);
+					p.setDouble(3, price);
+					p.setString(4, file);
+					p.setLong(5, code);
+					p.execute();
+				}
+			} catch (Exception e) { }
 			
 			return "edit";
 		}
