@@ -176,6 +176,35 @@ public class Main {
 		}
 	}
 	
+	@RequestMapping(value="/edit", method=RequestMethod.POST)
+	String updateProduct(HttpSession session, Model model,
+			long code, String name, String detail, double price) {
+		Member member = (Member)session.getAttribute("member");
+		if (member == null) {
+			return "redirect:/login";
+		} else {
+			Product t = new Product();
+			t.code   = code;
+			t.name   = name;
+			t.detail = detail;
+			t.price  = price;
+			model.addAttribute("product", t);
+			model.addAttribute("shop", shop);
+			String sql = "update product set name=?,detail=?,price=? " +
+						"where code=?";
+			try (Connection c = DriverManager.getConnection(database)) {
+				try (PreparedStatement p = c.prepareStatement(sql)) {
+					p.setString(1, name);
+					p.setString(2, detail);
+					p.setDouble(3, price);
+					p.setLong(4, code);
+					p.execute();
+				}
+			} catch (Exception e) { }
+			return "edit";
+		}
+	}
+	
 	@RequestMapping("/status") @ResponseBody
 	String status() {
 		return "Server is OK";
