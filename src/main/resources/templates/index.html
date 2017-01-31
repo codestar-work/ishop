@@ -1,6 +1,14 @@
 <#include 'header.html'>
 
 <div class='container'>
+	
+	<form action="/result">
+		<input name="query" class="form-control"
+			   placeholder="Search Product"
+			   autofocus>
+		<button class="btn btn-primary">Search</button>
+	</form>
+	
 	<h3>Our Product</h3>
 	<#list product as p>
 		${p} <br>
