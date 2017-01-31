@@ -13,11 +13,20 @@ import org.springframework.web.bind.annotation.*;
 public class Main {
 	String database = "jdbc:mysql://icode.run/ishop" + 
 						"?user=ishop&password=iShop2017";
-	String shop = "iCoffee";
+	String shop = "";
 	
 	Main() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
+			try (Connection c = DriverManager.getConnection(database)) {
+			try (Statement  s = c.createStatement()) {
+			try (ResultSet  r = s.executeQuery("select * from shop")) {
+				if (r.next()) {
+					this.shop = r.getString("name");
+				}
+			}
+			}
+			}
 		} catch (Exception e) { }
 	}
 	
@@ -90,6 +99,7 @@ public class Main {
 			try (ResultSet  r = s.executeQuery("select * from shop")) {
 				if (r.next()) {
 					model.addAttribute("member", member);
+					this.shop = r.getString("name");
 					model.addAttribute("shop",   r.getString("name"));
 					model.addAttribute("phone",  r.getString("phone"));
 				}
@@ -100,7 +110,7 @@ public class Main {
 			if (shop != null || phone != null) {
 				model.addAttribute("shop", shop);
 				model.addAttribute("phone", phone);
-				String sql = "update shop set shop = ?, phone = ?";
+				String sql = "update shop set name = ?, phone = ?";
 				try (Connection c = DriverManager.getConnection(database)) {
 				try (PreparedStatement  p = c.prepareStatement(sql)) {
 					p.setString(1, shop);
@@ -108,6 +118,7 @@ public class Main {
 					p.execute();
 				}
 				} catch (Exception e) { }
+				return "redirect:/settings";
 			}
 			return "settings";
 		}
