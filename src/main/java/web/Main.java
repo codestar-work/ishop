@@ -162,6 +162,9 @@ public class Main {
 							t.detail = r.getString("detail");
 							t.photo  = r.getString("photo");
 							t.price  = r.getDouble("price");
+							if (t.name   == null) { t.name   = ""; }
+							if (t.detail == null) { t.detail = ""; }
+							if (t.photo  == null) { t.photo  = ""; }
 						}
 					}
 				}

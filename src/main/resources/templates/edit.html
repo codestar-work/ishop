@@ -1,7 +1,19 @@
 <#include 'header.html'>
 
 <div class="container">
-	<input value="${product.name}" class="form-control">
+	<form method="post">
+		<input value="${product.name}"
+			name="name" 
+			class="form-control"
+			placeholder="Product Name" >
+		<textarea class="form-control" name="detail"
+			placeholder="Detail">${product.detail}</textarea>
+		<input value="${product.price}"
+			name="price" 
+			class="form-control"
+			placeholder="Product Price" >
+		<button class="btn btn-primary">Update</button>
+	</form>
 </div>
 
 
